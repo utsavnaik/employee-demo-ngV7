@@ -60,13 +60,11 @@ export class EmployeelistComponent implements AfterViewInit, OnInit,OnDestroy {
 
   pageChange() {
     this.subscriptions.push(this.paginator.page
-    .pipe(
-        tap(() => {
-          this.dataSource.loadAllEmployees(this.field,this.sort.direction,this.paginator.pageIndex, this.pageSize,this.input.nativeElement.value);
-        })
-    )
     .subscribe(
-      (data)=>{ console.log(data) },
+      (data)=>{ 
+         this.dataSource.loadAllEmployees(this.field,this.sort.direction,data.pageIndex, data.pageSize,this.input.nativeElement.value); 
+        //  this.dataSource.paginator = this.paginator;
+       },
       (error)=>{ console.log(error.error)}
     ));
   }
