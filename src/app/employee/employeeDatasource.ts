@@ -1,10 +1,10 @@
 import { EmployeeModel } from './models/employee.model';
 import { DataSource } from '@angular/cdk/table';
-import { BehaviorSubject, Observable, of, concat, iif } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { EmployeeService } from './services/employee.service';
 import { CollectionViewer } from '@angular/cdk/collections';
-import { catchError, finalize, map, mergeMap, concatMap } from 'rxjs/operators';
-
+import { catchError, finalize, map, mergeMap } from 'rxjs/operators';
+import {forkJoin} from 'rxjs';
 export class EmployeeDataSource implements DataSource<EmployeeModel> {
     fetchData = 250;
     private employee$: Observable<EmployeeModel[]>;
@@ -26,15 +26,17 @@ export class EmployeeDataSource implements DataSource<EmployeeModel> {
 
     loadAllEmployees(field:string,direction= 'asc',pageIndex = 0, pageSize = 10,filterValue = '') {
       if(pageIndex == 0 && (pageIndex * pageSize) < this.fetchData ) {
-            this.employeeService.getAllEmployee(field,direction,pageIndex, this.fetchData,filterValue)
+            forkJoin(this.employeeService.getAllEmployee(field,direction,pageIndex, this.fetchData,filterValue)
+            ,this.employeeSubject)
             .pipe(
-                concatMap((employeeObj$) => concat(employeeObj$,this.employeeSubject)),
-                catchError(() => of([])),
-                finalize(() => this.loadingSubject.next(false))
+                map(([Nemp,oemp]) => {
+                    console.log('xcxcx',oemp);
+                    return [...Nemp,...oemp]   
+                })
             )
             .subscribe((employees:EmployeeModel[]) => {
-                console.log('eeeee',employees);
-               this.employeeSubject.next(employees);
+                console.log('employees',employees);
+                this.employeeSubject.next(employees);
             });     
         } 
       }    
