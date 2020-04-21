@@ -1,95 +1,11 @@
 {
   "employees": [
     {
-      "id": 26,
-      "first_name": "Fleta1",
-      "last_name": "Dickens1",
-      "gender": "male",
-      "contact": 482876
-    },
-    {
-      "id": 27,
-      "first_name": "Blaise",
-      "last_name": "Baumbach",
-      "gender": "male",
-      "contact": 925974
-    },
-    {
-      "id": 28,
-      "first_name": "Denis",
-      "last_name": "Von",
-      "gender": "female",
-      "contact": 322698
-    },
-    {
-      "id": 29,
-      "first_name": "Taryn",
-      "last_name": "Mayer",
-      "gender": "male",
-      "contact": 672941
-    },
-    {
-      "id": 30,
-      "first_name": "Norene",
-      "last_name": "Goyette",
-      "gender": "male",
-      "contact": 431226
-    },
-    {
-      "id": 31,
-      "first_name": "Rubie",
-      "last_name": "West",
-      "gender": "female",
-      "contact": 634461
-    },
-    {
-      "id": 32,
-      "first_name": "Demond",
-      "last_name": "Hirthe",
-      "gender": "male",
-      "contact": 391417
-    },
-    {
-      "id": 33,
-      "first_name": "Deshawn",
-      "last_name": "Haag",
-      "gender": "male",
-      "contact": 453244
-    },
-    {
-      "id": 34,
-      "first_name": "Loma",
-      "last_name": "McClure",
-      "gender": "female",
-      "contact": 530756
-    },
-    {
-      "id": 35,
-      "first_name": "Zakary",
-      "last_name": "Wiegand",
-      "gender": "female",
-      "contact": 947053
-    },
-    {
       "id": 36,
       "first_name": "Richard",
       "last_name": "Nader",
       "gender": "female",
       "contact": 678969
-    },
-    {
-      "id": 37,
-      "first_name": "Mia",
-      "last_name": "Moen",
-      "gender": "male",
-      "contact": 410265
-    },
-    {
-      "id": 38,
-      "first_name": "Kyler",
-      "last_name": "Bashirian",
-      "gender": "male",
-      "contact": 102386
     },
     {
       "id": 39,
@@ -139,13 +55,6 @@
       "last_name": "Cronin",
       "gender": "male",
       "contact": 428669
-    },
-    {
-      "id": 46,
-      "first_name": "Cory",
-      "last_name": "Pouros",
-      "gender": "female",
-      "contact": 197126
     },
     {
       "id": 47,

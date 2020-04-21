@@ -10,6 +10,7 @@ import {  Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfirmdialodComponent } from 'src/app/shared/confirmdialod/confirmdialod.component';
+import { EmployeeDataSource } from '../employeeDatasource';
 
 
 @Component({
@@ -19,9 +20,11 @@ import { ConfirmdialodComponent } from 'src/app/shared/confirmdialod/confirmdial
 })
 export class EmployeelistComponent implements AfterViewInit, OnInit,OnDestroy {
   field = 'id';
-  dataSource:any;
+  pageSize = 250;
+  perPage = 10;
+  length = 1000;
+  dataSource:EmployeeDataSource;
   displayedColumns: string[] = ['id', 'firstName', 'lastName', 'gender', 'contact','action'];
-  allEmployees: Observable<EmployeeModel[]>;
   subscriptions: Subscription[] = []
   @ViewChild('input') input: ElementRef;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -35,7 +38,9 @@ export class EmployeelistComponent implements AfterViewInit, OnInit,OnDestroy {
   }
 
   ngOnInit(): void {
-    this.loadAllEmployees();
+    this.dataSource = new EmployeeDataSource(this.employeeService);
+    this.dataSource.loadAllEmployees(this.field,'asc',0,this.perPage);
+    // this.loadAllEmployees();
   }
 
   ngAfterViewInit(): void {
@@ -49,16 +54,16 @@ export class EmployeelistComponent implements AfterViewInit, OnInit,OnDestroy {
     this.subscriptions.push(this.sort.sortChange.subscribe((ele) => {
       this.paginator.pageIndex = 0;
       this.field = ele.active;
-      this.loadAllEmployees();
+      this.dataSource.loadAllEmployees(this.field,this.sort.direction,this.paginator.pageIndex, this.perPage,this.input.nativeElement.value);
      }));
   }
-
 
   pageChange() {
     this.subscriptions.push(this.paginator.page
     .pipe(
-        delay(0),
-        tap(() => this.loadAllEmployees())
+        tap(() => {
+          this.dataSource.loadAllEmployees(this.field,this.sort.direction,this.paginator.pageIndex, this.pageSize,this.input.nativeElement.value);
+        })
     )
     .subscribe(
       (data)=>{ console.log(data) },
@@ -66,9 +71,9 @@ export class EmployeelistComponent implements AfterViewInit, OnInit,OnDestroy {
     ));
   }
 
-  onRowClicked(row) {
-    console.log('Row clicked: ', row);
-  }
+  // onRowClicked(row) {
+  //   console.log('Row clicked: ', row);
+  // }
 
   performSearch() {
     this.subscriptions.push(fromEvent(this.input.nativeElement,'keyup')
@@ -77,69 +82,65 @@ export class EmployeelistComponent implements AfterViewInit, OnInit,OnDestroy {
                 distinctUntilChanged(),
                 tap(() => {
                     this.paginator.pageIndex = 0;
-                    this.loadAllEmployees();
+                    this.dataSource.loadAllEmployees(this.field,this.sort.direction,this.paginator.pageIndex, this.perPage,this.input.nativeElement.value);
                 })
             )
             .subscribe());
   }
 
-   loadAllEmployees() {
-    this.subscriptions.push(this.employeeService.getAllEmployee(this.field,this.sort.direction,this.paginator.pageIndex, this.paginator.pageSize,this.input.nativeElement.value).subscribe((data)=>{
-      this.dataSource = new MatTableDataSource<EmployeeModel>(data);
-    }));
-  }
+  
+  // delete(item:EmployeeModel){
+  //   this.subscriptions.push(this.employeeService.deleteEmployeeById(item.id.toString()).subscribe(
+  //         (data)=>{
+  //           const index = this.dataSource.data.indexOf(item);
+  //           this.dataSource.data.splice(index, 1);
+  //           this.dataSource._updateChangeSubscription(); // <-- Refresh the datasource
+  //           const snack = this.snackBar.open('Delete employee successfully.','success',{
+  //             duration:1000
+  //           });
+  //         },
+  //         (error)=>{
+  //           const snack = this.snackBar.open('error while delete employee','error',{
+  //             duration:200
+  //           });
+  //         }
+  //       ));
 
-  delete(item:EmployeeModel){
-    this.subscriptions.push(this.employeeService.deleteEmployeeById(item.id.toString()).subscribe(
-          (data)=>{
-            const index = this.dataSource.data.indexOf(item);
-            this.dataSource.data.splice(index, 1);
-            this.dataSource._updateChangeSubscription(); // <-- Refresh the datasource
-            const snack = this.snackBar.open('Delete employee successfully.','success',{
-              duration:1000
-            });
-          },
-          (error)=>{
-            const snack = this.snackBar.open('error while delete employee','error',{
-              duration:200
-            });
-          }
-        ));
-
-  }
+  // }
 
   deleteWithDialog(item:EmployeeModel) {
-    const dialogRef = this.dialog.open(ConfirmdialodComponent,{
-      data:{
-        message: 'Are you sure want to delete?',
-        buttonText: {
-          ok: 'Yes',
-          cancel: 'No'
-        }
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(
-      (confirmed)=>{
-        if (confirmed) {
-          this.subscriptions.push(this.employeeService.deleteEmployeeById(item.id.toString()).subscribe(
-            (data)=>{
-              const index = this.dataSource.data.indexOf(item);
-              this.dataSource.data.splice(index, 1);
-              this.dataSource._updateChangeSubscription(); // <-- Refresh the datasource
-              const snack = this.snackBar.open('Snack bar open before dialog','success',{
-                duration:200
-              });
-            },
-            (error)=>{
-              const snack = this.snackBar.open('error while delete employee','error',{
-                duration:200
-              });
-            }
-          ));
+   
+      const dialogRef = this.dialog.open(ConfirmdialodComponent,{
+        data:{
+          message: 'Are you sure want to delete?',
+          buttonText: {
+            ok: 'delete',
+            cancel: 'cancel'
+          }
         }
       });
-   }
+   
+    //  dialogRef.afterClosed().subscribe(
+    //   (confirmed)=>{
+    //     if (confirmed) {
+    //       this.subscriptions.push(this.employeeService.deleteEmployeeById(item.id.toString()).subscribe(
+    //         (data)=>{
+    //           const index = this.dataSource.data.indexOf(item);
+    //           this.dataSource.data.splice(index, 1);
+    //           this.dataSource._updateChangeSubscription(); // <-- Refresh the datasource
+    //           const snack = this.snackBar.open('employee deleted successfully.','success',{
+    //             duration:200
+    //           });
+    //         },
+    //         (error)=>{
+    //           const snack = this.snackBar.open('error while delete employee','error',{
+    //             duration:200
+    //           });
+    //         }
+    //       ));
+    //     }
+    //   });
+  }
 
   ngOnDestroy(): void {
      this.subscriptions.forEach((subscription)=> subscription.unsubscribe());

@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject, AfterViewInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { timeout } from 'rxjs/operators';
 
 @Component({
   selector: 'app-confirmdialod',
@@ -7,27 +8,28 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./confirmdialod.component.css']
 })
 export class ConfirmdialodComponent implements OnInit {
-  message: string = "Are you sure?";
-  confirmButtonText = "Delete";
-  cancelButtonText = "Cancel";
+  message: String;
+  confirmButtonText: String;
+  cancelButtonText: String;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
   public dialogRef: MatDialogRef<ConfirmdialodComponent>) {
-       // if(this.data){
-    //   this.message = this.data.message || this.message;
-    //   if (this.data.buttonText) {
-    //     this.confirmButtonText = this.data.buttonText.ok || this.confirmButtonText;
-    //     this.cancelButtonText = this.data.buttonText.cancel || this.cancelButtonText;
-    //   }
-  // }
+      if(this.data){
+        this.message = this.data.message || 'Are you sure?';
+        this.confirmButtonText = this.data.buttonText.ok;
+        this.cancelButtonText = this.data.buttonText.cancel;
+      }
   }
 
   onConfirmClick(): void {
-    this.dialogRef.close();
-  }   
+    this.dialogRef.close(true);
+  } 
+  
+  onCancelClick(): void {
+    this.dialogRef.close(false);
+  }
 
   ngOnInit(): void {
-    this.dialogRef.close(true);
   }
 
 }
