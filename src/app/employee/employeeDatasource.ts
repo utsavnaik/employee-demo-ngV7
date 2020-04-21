@@ -26,18 +26,25 @@ export class EmployeeDataSource implements DataSource<EmployeeModel> {
 
     loadAllEmployees(field:string,direction= 'asc',pageIndex = 0, pageSize = 10,filterValue = '') {
       if(pageIndex == 0 && (pageIndex * pageSize) < this.fetchData ) {
-            forkJoin(this.employeeService.getAllEmployee(field,direction,pageIndex, this.fetchData,filterValue)
-            ,this.employeeSubject)
-            .pipe(
-                map(([Nemp,oemp]) => {
-                    console.log('xcxcx',oemp);
-                    return [...Nemp,...oemp]   
-                })
-            )
-            .subscribe((employees:EmployeeModel[]) => {
-                console.log('employees',employees);
-                this.employeeSubject.next(employees);
-            });     
-        } 
+        //   if(pageIndex) {
+                forkJoin(this.employeeService.getAllEmployee(field,direction,pageIndex, this.fetchData,filterValue)
+                ,this.employeeSubject)
+                .pipe(
+                    map(([Nemp,oemp]) => {
+                        console.log('xcxcx',oemp);
+                        return [...Nemp,...oemp]   
+                    })
+                )
+                .subscribe({
+                    next: value => {
+                      console.log('employee data',value)
+                       this.employeeSubject.next(value)
+                    },
+                    error:value => console.log(value.error),
+                    complete: () => console.log('This is how it ends!'),
+                   });     
+            // } 
+          }
+            
       }    
 }
